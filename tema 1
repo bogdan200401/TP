@@ -1,0 +1,382 @@
+PROBLEMA 1
+
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+    int m,n,i,j,contor=1;
+    int **a;
+    scanf("%d",&m);
+    scanf("%d",&n);
+       if((n<=10)&&(m<=20))
+    {
+        if((a=(int**)malloc(m*sizeof(int*)))==NULL)
+        {  
+            printf("memorie insuficienta!\n");
+            exit(EXIT_FAILURE);
+        }
+        for(i=0;i<m;i++)
+        {
+            if((a[i]=(int*)malloc(n*sizeof(int)))==NULL)
+            {
+                for(int temp=i-1;temp>=0;temp--)
+                    free(a[i]);
+                free(a);
+                printf("memorie insuficienta\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        for(i=0;i<m;i++)
+        {
+                for(j=0;j<n;j++)
+                    a[i][j]=contor++;
+        }
+        for(i=0;i<m;i++)
+        {
+            for(j=0;j<n;j++)
+                printf("%d ",a[i][j]);
+            printf("\n");
+        }
+    }
+    else
+    printf("Valorile introduse nu respecta conditia!");
+    return 0;
+}
+
+
+PROBLEMA 2
+
+
+#include <stdio.h>
+#include <stdlib.h>
+int main()
+{
+    int n,i,j,contor=1,aux;
+    int **a;
+    scanf("%d",&n);
+    if(n<=50)
+    {
+        if((a=(int**)malloc(n*sizeof(int*)))==NULL)
+        {  
+            printf("memorie insuficienta!\n");
+            exit(EXIT_FAILURE);
+        }
+        for(i=0;i<n;i++)
+        {
+            if((a[i]=(int*)malloc(n*sizeof(int)))==NULL)
+            {
+                for(int temp=i-1;temp>=0;temp--)
+                    free(a[i]);
+                free(a);
+                printf("memorie insuficienta\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+        for(i=0;i<n;i++)
+        {
+                for(j=0;j<n;j++)
+                    a[i][j]=contor++;
+        }
+        for(i=0;i<n;i++)
+        {
+            for(j=i+1;j<n;j++)
+            {
+                aux=a[i][j];
+                a[i][j]=a[j][i];
+                a[j][i]=aux;
+            }
+        }
+        for(i=0;i<n;i++)
+        {
+            for(j=0;j<n;j++)
+                printf("%d ",a[i][j]);
+            printf("\n");
+        }
+    }
+    else
+    printf("Valorile introduse nu respecta conditia!");
+    return 0;
+}
+
+PROBLEMA 3
+
+#include <stdio.h>
+int main()
+{
+    int n,i,j;
+    int lin[n],col[n]; 
+    scanf("%d",&n);
+    int a[n][n];
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+        scanf("%d",&a[i][j]);
+      }
+    }
+    for(i=0;i<n;i++)
+    {
+        lin[i]=0;
+      for(j=0;j<n;j++)
+      {
+        lin[i]=lin[i]+a[i][j];
+      }
+
+      printf("linia %d are suma %d\n",i+1,lin[i]);
+    }
+    for(j=0;j<n;j++)
+    {
+        col[j]=0;
+      for(i=0;i<n;i++)
+      {
+        col[j]=col[j]+a[i][j];
+      }
+      printf("linia %d are suma %d\n",j+1,col[j]);
+    }
+    printf("\n");
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+	        printf("%d ",a[i][j]);
+      }
+      printf("\n");
+    }
+    return 0;
+}
+
+PROBLEMA 4
+
+#include <stdio.h>
+int main()
+{
+    int n,i,j,m,x,y,d;
+    int dmin=999;
+    int imin,jmin;
+    scanf("%d",&n);
+    int a[n][n];
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+        a[i][j]=0;
+      }
+    }
+    scanf("%d",&m);
+    for(i=0;i<m;i++)
+    {
+        scanf("%d",&x);
+        scanf("%d",&y);
+        scanf("%d",&d);
+        a[x][y]=d;
+        a[y][x]=d;
+    }
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            if(a[i][j]<dmin && a[i][j]!=0)
+            {
+                dmin=a[i][j];
+                imin=i;
+                jmin=j;
+
+            }
+        }
+    }
+    printf("dis minima %d si perechea de orase este %d si %d\n",dmin,imin,jmin);
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+	        printf("%d ",a[i][j]);
+      }
+      printf("\n");
+    }
+    return 0;
+}
+
+
+PROBLEMA 5
+
+
+#include <stdio.h>
+
+int main()
+{
+    int n,i,j,m,x,y,d,p,s,jj,ok,nr;
+    scanf("%d",&n);
+    int a[n][n];
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+       a[i][j]==0;
+      }
+    }
+    for(i=0;i<n;i++)
+    {
+      scanf("%d",&nr);
+      for(j=0;j<nr;j++)
+      {
+        scanf("%d",&x);
+        a[i][x]=1;
+      }
+    }
+    for(i=0;i<n;i++)
+    {
+      printf("persoana i %d are prietenii:",i);
+      for(j=0;j<n;j++)
+      {
+        if(a[i][j]==1)
+          printf("%d ",j);
+      }
+      printf("\n");
+    }
+    return 0;
+}
+
+
+PROBLEMA  6
+
+#include <stdio.h>
+
+int main()
+{
+    int n,i,j,m,x,y,d,p,s,jj;
+    scanf("%d",&m);
+    scanf("%d",&n);
+    scanf("%d",&p);
+    int a[m][n];
+    int b[n][p];
+    int c[m][p];
+    for(i=0;i<m;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+        scanf("%d",&a[i][j]);
+      }
+    }
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<p;j++)
+      {
+        scanf("%d",&b[i][j]);
+      }
+    }
+    for(i=0;i<m;i++)
+    {
+        for(j=0;j<p;j++)
+        {
+            s=0;
+            for(jj=0;jj<n;jj++)
+            {
+                s=s+a[i][jj]*b[jj][j];
+            }
+            printf("%d ",s);
+            c[i][j]=s;
+        }
+        printf("\n");
+    }
+    return 0;
+}
+
+
+PROBLEMA 7
+
+#include <stdio.h>
+
+int main()
+{
+    int n,i,j;  
+    scanf("%d",&n);
+    int a[n][n];
+    for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+        if(i==j)
+            a[i][j]=1;
+        else
+            a[i][j]=0;
+      }
+    }
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            printf("%d ",a[i][j]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+
+
+PROBLEMA 1 EXAMEN
+
+
+#include <stdio.h>
+int main()
+{
+  int n,m,aux;
+  int i,j,ii,jj,ok;
+  scanf("%d",&n);
+  scanf("%d",&m);
+  int a[n][n];
+  int b[m][m];
+  int cnt=1;
+  for(i=0;i<n;i++)
+    for(j=0;j<n;j++)
+      {
+        scanf("%d",&a[i][j]);
+      }
+    for(i=0;i<m;i++)
+        for(j=0;j<m;j++)
+        {
+            scanf("%d",&b[i][j]);
+        }
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            if(i+1<=m)
+            {
+                ok=1;
+                for(ii=0;ii<m && ok==1;ii++)
+                {
+                    for(jj=0;jj<m && ok==1;jj++)
+                    {
+                        if(b[ii][jj]!=a[i+ii][j+jj])
+                        {
+                            ok=0;
+                        }
+                    }
+                }
+                if(ok==1)
+                {
+                    printf("(%d,%d)\n",i,j);
+                }
+            }
+        }
+    }
+
+  for(i=0;i<n;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+	        printf("%d ",a[i][j]);
+      }
+      printf("\n");
+    }
+  printf("\n");
+  for(i=0;i<m;i++)
+    {
+      for(j=0;j<n;j++)
+      {
+	        printf("%d ",b[i][j]);
+      }
+      printf("\n");
+    }
+  return 0;
+}
