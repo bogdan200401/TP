@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <math.h>
+typedef struct {
+    double x;
+    double y;
+} Punct;
+double distanta(Punct p1, Punct p2) {
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+Punct punctulCelMaiApropiat(Punct bormasina, Punct puncte[], int n) {
+    Punct celMaiApropiat = puncte[0];
+    double distantaMinima = distanta(bormasina, celMaiApropiat);
+    for (int i = 1; i < n; i++) {
+        double dist = distanta(bormasina, puncte[i]);
+        if (dist < distantaMinima) {
+            distantaMinima = dist;
+            celMaiApropiat = puncte[i];
+        }
+    }
+    return celMaiApropiat;
+}
+
+int main() {
+    int n;
+    printf("Introduceti numarul de puncte (n < 100): ");
+    scanf("%d", &n);
+    if (n <= 0 || n >= 100) {
+        printf("Numarul introdus nu este valid.\n");
+        return 1;
+    }
+    Punct bormasina = {0, 0};
+    Punct puncte[n];
+    printf("Introduceti coordonatele pentru fiecare punct:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Punctul %d (x, y): ", i + 1);
+        scanf("%lf %lf", &puncte[i].x, &puncte[i].y);
+    }
+
+    printf("Ordinea de dat gauri este:\n");
+    for (int i = 0; i < n; i++) {
+        Punct celMaiApropiat = punctulCelMaiApropiat(bormasina, puncte, n);
+        printf("(%0.2lf, %0.2lf)\n", celMaiApropiat.x, celMaiApropiat.y);
+        bormasina = celMaiApropiat; 
+        puncte[i] = puncte[n - 1];
+        n--;
+    }
+    return 0;
+}
