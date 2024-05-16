@@ -1,0 +1,71 @@
+#include <stdio.h>
+int cmmdc(int a, int b) {
+    if (b == 0) {
+        return a;
+    } else {
+        return cmmdc(b, a % b);
+    }
+}
+int main() {
+    int a, b;
+    printf("Introduceti doua numere: ");
+    scanf("%d %d", &a, &b);
+    int rezultat = cmmdc(a, b);
+    printf("Cel mai mare divizor comun al %d si %d este: %d\n", a, b, rezultat);
+    return 0;
+}
+
+#include <stdio.h>
+int suma_cifrelor(int n) {
+    if (n < 10) {
+        return n;
+    } else {
+        return n % 10 + suma_cifrelor(n / 10);
+    }
+}
+int main() {
+    int numar;
+    printf("Introduceti un numar natural: ");
+    scanf("%d", &numar);
+    int rezultat = suma_cifrelor(numar);
+    printf("Suma cifrelor numarului %d este: %d\n", numar, rezultat);
+    return 0;
+}
+
+#include <stdio.h>
+int cifra_maxima(int n) {
+    if (n < 10) {
+        return n;
+    } else {
+        int cifra_ultima = n % 10;
+        int cifra_restanta_maxima = cifra_maxima(n / 10);
+        return (cifra_ultima > cifra_restanta_maxima) ? cifra_ultima : cifra_restanta_maxima;
+    }
+}
+int main() {
+    int numar;
+    printf("Introduceti un numar natural: ");
+    scanf("%d", &numar);
+    int cifra_max = cifra_maxima(numar);
+    printf("Cifra maxima a numarului %d este: %d\n", numar, cifra_max);
+    return 0;
+}
+
+
+#include <stdio.h>
+int fibonacci(int n) {
+    if (n <= 1) {
+        return n;
+    } else {
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+}
+
+int main() {
+    int n;
+    printf("Introduceti un numar n: ");
+    scanf("%d", &n);
+    int rezultat = fibonacci(n);
+    printf("Termenul Fibonacci al %d-lea este: %d\n", n, rezultat);
+    return 0;
+}
