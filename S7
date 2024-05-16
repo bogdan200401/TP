@@ -1,415 +1,157 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define path "data.in"
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
 
-FILE *file;
+Node *createNode(int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Eroare la alocarea de memorie pentru nod.\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
 
-typedef struct nod
-{
-    int info;
-    struct nod *next;
-} nod;
+void insertEnd(Node **head, int data) {
+    Node *newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
 
-void afisare(nod *lista)
-{
-    nod *p;
-    for (p = lista; p != NULL; p = p->next)
-    {
-        printf("%d ", p->info);
+void displayList(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
     }
     printf("\n");
 }
 
-nod *newNod(int info, nod *next)
-{
-    nod *nou = NULL;
-    if ((nou = malloc(1 * sizeof(nod))) == NULL)
-    {
-        return NULL;
-    }
-    nou->info = info;
-    nou->next = next;
-    return nou;
-}
-
-nod *adaugaInceput(int info, nod *lista)
-{
-    nod *nou = NULL;
-    nou = newNod(info, lista);
-    lista = nou;
-    return lista;
-}
-
-nod *adaugaFinal(int info, nod *lista)
-{
-    nod *nou = NULL, *aux;
-    nou = newNod(info, NULL);
-    if (lista == NULL)
-    {
-        lista = nou;
-    }
-    else
-    {
-        for (aux = lista; aux->next != NULL; aux = aux->next)
-            ;
-        aux->next = nou;
-    }
-    return lista;
-}
-
-nod *stergeInceput(nod *lista)
-{
-    if (lista == NULL)
-    {
-        return lista;
-    }
-    nod *aux;
-    aux = lista;
-    lista = lista->next;
-    free(aux);
-    return lista;
-}
-
-nod *stergeFinal(nod *lista)
-{
-    if (lista == NULL)
-    {
-        return lista;
-    }
-    if (lista->next == NULL)
-    {
-        free(lista);
-        return NULL;
-    }
-    nod *aux, *final;
-    for (aux = lista; aux->next->next != NULL; aux = aux->next)
-        ;
-    final = aux->next;
-    aux->next = NULL;
-    free(final);
-    return lista;
-}
-
-nod *sterge(int info, nod *lista)
-{
-    nod *aux, *ant;
-    if (lista == NULL)
-    {
-        return lista;
-    }
-    if (lista->info == info)
-    {
-        aux = lista;
-        lista = lista->next;
-        free(aux);
-    }
-    else
-    {
-        for (ant = lista, aux = lista->next; aux != NULL; ant = ant->next, aux = aux->next)
-        {
-            if (aux->info == info)
-            {
-                ant->next = aux->next;
-                free(aux);
-                break;
-            }
+// Aplicația 7.1
+int areListsIdentice(Node *list1, Node *list2) {
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->data != list2->data) {
+            return 0;
         }
+        list1 = list1->next;
+        list2 = list2->next;
     }
-    return lista;
+    return (list1 == NULL && list2 == NULL);
 }
 
-void freeLista(nod *lista)
-{
-    nod *aux;
-    while (lista != NULL)
-    {
-        aux = lista->next;
-        free(lista);
-        lista = aux;
+// Aplicația 7.2
+void inverseazaLista(Node **head) {
+    Node *prev = NULL;
+    Node *current = *head;
+    Node *next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
     }
+    *head = prev;
 }
 
-nod *init(int *size)
-{
-    nod *lista = NULL;
-    int listSize, i, info;
-    fscanf(file, "%d", &listSize);
-    *size = listSize;
-    for (i = 0; i < listSize; i++)
-    {
-        fscanf(file, "%d", &info);
-        lista = adaugaFinal(info, lista);
+// Aplicația 7.3
+Node *reuniuneListe(Node *list1, Node *list2) {
+    Node *reunion = NULL;
+    while (list1 != NULL) {
+        insertEnd(&reunion, list1->data);
+        list1 = list1->next;
     }
-    return lista;
-}
-
-// Problema 7.1
-
-void p1(void)
-{
-    nod *lista1 = NULL, *lista2 = NULL;
-    int size1, size2, i, data1, data2;
-    lista1 = init(&size1);
-    lista2 = init(&size2);
-    for (i = 0; i < (size1 < size2 ? size1 : size2); i++)
-    {
-        data1 = lista1->info;
-        data2 = lista2->info;
-        if (data1 != data2)
-        {
-            printf("0\n");
-            free(lista1);
-            free(lista2);
-            return;
+    while (list2 != NULL) {
+        if (!esteInLista(reunion, list2->data)) {
+            insertEnd(&reunion, list2->data);
         }
-        lista1 = stergeInceput(lista1);
-        lista2 = stergeInceput(lista2);
+        list2 = list2->next;
     }
-    printf("1\n");
-    free(lista1);
-    free(lista2);
+    return reunion;
 }
 
-// Problema 7.2
-
-void p2(void)
-{
-    nod *lista = NULL;
-    int size;
-    lista = init(&size);
-    if (lista == NULL)
-    {
+// Aplicația 7.4
+void stergeElement(Node **head, int data) {
+    Node *temp = *head;
+    Node *prev = NULL;
+    if (temp != NULL && temp->data == data) {
+        *head = temp->next;
+        free(temp);
         return;
     }
-    nod *prev, *q, *aux;
-    for (prev = lista, q = lista->next; q->next != NULL; prev = q, q = aux)
-    {
-        aux = q->next;
-        q->next = prev;
+    while (temp != NULL && temp->data != data) {
+        prev = temp;
+        temp = temp->next;
     }
-    q->next = prev;
-    lista->next = NULL;
-    lista = q;
-    afisare(lista);
-    freeLista(lista);
+    if (temp == NULL) {
+        return;
+    }
+    prev->next = temp->next;
+    free(temp);
 }
 
-// Problema 7.3
-
-int isInList(int info, nod *lista)
-{
-    nod *p;
-    for (p = lista; p != NULL; p = p->next)
-    {
-        if (p->info == info)
-        {
-            return 1;
+// Aplicația 7.5
+int suntListeleEgale(Node *list1, Node *list2) {
+    int frecventa1[101] = {0};
+    int frecventa2[101] = {0};
+    while (list1 != NULL) {
+        frecventa1[list1->data]++;
+        list1 = list1->next;
+    }
+    while (list2 != NULL) {
+        frecventa2[list2->data]++;
+        list2 = list2->next;
+    }
+    for (int i = 0; i <= 100; i++) {
+        if (frecventa1[i] != frecventa2[i]) {
+            return 0;
         }
     }
+    return 1;
+}
+
+int main() 
+{
+    Node *lista1 = NULL;
+    Node *lista2 = NULL;
+
+    insertEnd(&lista1, 1);
+    insertEnd(&lista1, 7);
+    insertEnd(&lista1, 3);
+    insertEnd(&lista1, 1);
+    insertEnd(&lista1, 3);
+
+    insertEnd(&lista2, 7);
+    insertEnd(&lista2, 1);
+    insertEnd(&lista2, 3);
+    insertEnd(&lista2, 7);
+
+    printf("Listele sunt identice: %d\n", areListsIdentice(lista1, lista2));
+
+    inverseazaLista(&lista1);
+    printf("Lista inversata: ");
+    displayList(lista1);
+
+    Node *reunion = reuniuneListe(lista1, lista2);
+    printf("Reuniunea listelor: ");
+    displayList(reunion);
+
+    stergeElement(&reunion, 3);
+    printf("Reuniunea listelor dupa stergere: ");
+    displayList(reunion);
+
+    printf("Listele sunt egale: %d\n", suntListeleEgale(lista1, lista2));
+
     return 0;
-}
-
-void p3(void)
-{
-    nod *lista1, *lista2, *lista3 = NULL;
-    int size1, size2, i, data;
-    lista1 = init(&size1);
-    lista2 = init(&size2);
-    for (i = 0; i < size1; i++)
-    {
-        data = lista1->info;
-        lista1 = stergeInceput(lista1);
-        if (!isInList(data, lista1))
-        {
-            lista3 = adaugaFinal(data, lista3);
-        }
-    }
-    for (i = 0; i < size2; i++)
-    {
-        data = lista2->info;
-        lista2 = stergeInceput(lista2);
-        if (!isInList(data, lista3))
-        {
-            lista3 = adaugaFinal(data, lista3);
-        }
-    }
-    afisare(lista3);
-    freeLista(lista1);
-    freeLista(lista2);
-    freeLista(lista3);
-}
-
-// Problema 7.4
-
-nod *sterge4(int info, nod *inceput, nod *final)
-{
-    nod *aux, *ant;
-    if (inceput == NULL)
-    {
-        return inceput;
-    }
-    if (inceput->info == info)
-    {
-        aux = inceput;
-        inceput = inceput->next;
-        free(aux);
-        if (inceput == NULL)
-        {
-            final = NULL;
-        }
-    }
-    else
-    {
-        for (ant = inceput, aux = inceput->next; aux != NULL; ant = ant->next, aux = aux->next)
-        {
-            if (aux->info == info)
-            {
-                ant->next = aux->next;
-                free(aux);
-                if (ant->next == NULL)
-                {
-                    final = ant;
-                }
-                break;
-            }
-        }
-    }
-    return inceput;
-}
-
-// Problema 7.5
-
-void p5(void)
-{
-    nod *lista1, *lista2;
-    int size1, size2, i, data;
-    lista1 = init(&size1);
-    lista2 = init(&size2);
-    if (size1 > size2)
-    {
-        for (i = 0; i < size1; i++)
-        {
-            data = lista1->info;
-            if (!isInList(data, lista2))
-            {
-                printf("0\n");
-                freeLista(lista1);
-                freeLista(lista2);
-                return;
-            }
-            lista1 = lista1->next;
-        }
-    }
-    else
-    {
-        for (i = 0; i < size2; i++)
-        {
-            data = lista2->info;
-            if (!isInList(data, lista1))
-            {
-                printf("0\n");
-                freeLista(lista1);
-                freeLista(lista2);
-                return;
-            }
-            lista2 = lista2->next;
-        }
-    }
-    printf("1\n");
-    freeLista(lista1);
-    freeLista(lista2);
-}
-
-// Problema 7.6
-
-nod *inserareCrescatoare(int data, nod *lista)
-{
-    nod *p, *q, *nouNod;
-    nouNod = newNod(data, NULL);
-    if (lista == NULL)
-    {
-        lista = nouNod;
-    }
-    else
-    {
-        if (nouNod->info < lista->info)
-        {
-            adaugaInceput(data, lista);
-        }
-        else
-        {
-            if (lista->next == NULL)
-            {
-                adaugaFinal(data, lista);
-            }
-            else
-            {
-                for (p = lista, q = lista->next; q != NULL; p = p->next, q = q->next)
-                {
-                    if (p->info <= data && data <= q->info)
-                    {
-                        p->next = nouNod;
-                        nouNod->next = q;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    return lista;
-}
-
-nod *sortare(nod *lista)
-{
-    nod *p;
-    nod *listaSortata = NULL;
-    for (p = lista; p != NULL; p = p->next)
-    {
-        listaSortata = inserareCrescatoare(p->info, listaSortata);
-    }
-    return listaSortata;
-}
-
-void p6(void)
-{
-    nod *lista;
-    int size;
-    lista = init(&size);
-    lista = sortare(lista);
-    afisare(lista);
-    freeLista(lista);
-}
-
-// Problema 7.7
-
-void p7(void)
-{
-    nod *lista1, *lista2, *p;
-    int size1, size2;
-    lista1 = init(&size1);
-    lista2 = init(&size2);
-    for (p = lista1; p != NULL; p = p->next)
-    {
-        adaugaFinal(p->info, lista2);
-    }
-    lista2 = sortare(lista2);
-    afisare(lista2);
-    freeLista(lista1);
-    freeLista(lista2);
-}
-
-int main(void)
-{
-    if ((file = fopen(path, "r")) == NULL)
-    {
-        printf("Eroare\n");
-        return 0;
-    }
-    p7();
-    if (fclose(file) != 0)
-    {
-        printf("Eroare\n");
-        return 0;
-    }
 }
