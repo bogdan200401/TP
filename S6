@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <math.h>
 
-// Definirea funcției err
 void err(int condition, const char *format, ...) {
     if (condition) {
         va_list args;
@@ -13,7 +12,6 @@ void err(int condition, const char *format, ...) {
     }
 }
 
-// Definirea funcției allocVec
 float *allocVec(int n, ...) {
     float *vector = (float *)malloc(n * sizeof(float));
     if (vector == NULL) {
@@ -31,7 +29,6 @@ float *allocVec(int n, ...) {
     return vector;
 }
 
-// Definirea funcției absN
 void absN(int n, ...) {
     va_list args;
     va_start(args, n);
@@ -42,7 +39,6 @@ void absN(int n, ...) {
     va_end(args);
 }
 
-// Definirea funcției crescator
 int crescator(int n, char tip, ...) {
     va_list args;
     va_start(args, tip);
@@ -74,7 +70,7 @@ int crescator(int n, char tip, ...) {
         }
         default:
             va_end(args);
-            return -1; // Tip necunoscut
+            return -1; 
     }
     
     va_end(args);
