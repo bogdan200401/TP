@@ -1,0 +1,189 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Nod {
+    int valoare;
+    struct Nod *urmator;
+} Nod;
+
+typedef struct NodDublu {
+    int valoare;
+    struct NodDublu *urmator;
+    struct NodDublu *anterior;
+} NodDublu;
+
+void creareListePareImpare(FILE *fisier, Nod **listaPare, Nod **listaImpare) {
+    int numar;
+    while (fscanf(fisier, "%d", &numar) == 1) {
+        if (numar % 2 == 0) {
+            if (*listaPare == NULL) {
+                *listaPare = (Nod *)malloc(sizeof(Nod));
+                (*listaPare)->valoare = numar;
+                (*listaPare)->urmator = NULL;
+            } else {
+                Nod *nou = (Nod *)malloc(sizeof(Nod));
+                nou->valoare = numar;
+                nou->urmator = *listaPare;
+                *listaPare = nou;
+            }
+        } else {
+            if (*listaImpare == NULL) {
+                *listaImpare = (Nod *)malloc(sizeof(Nod));
+                (*listaImpare)->valoare = numar;
+                (*listaImpare)->urmator = NULL;
+            } else {
+                Nod *nou = (Nod *)malloc(sizeof(Nod));
+                nou->valoare = numar;
+                nou->urmator = *listaImpare;
+                *listaImpare = nou;
+            }
+        }
+    }
+}
+
+void inserareJumatatePare(Nod *lista) {
+    Nod *curent = lista;
+    while (curent != NULL) {
+        if (curent->valoare % 2 == 0) {
+            Nod *nou = (Nod *)malloc(sizeof(Nod));
+            nou->valoare = curent->valoare / 2;
+            nou->urmator = curent->urmator;
+            curent->urmator = nou;
+            curent = nou->urmator; // trecem peste noul nod inserat
+        } else {
+            curent = curent->urmator;
+        }
+    }
+}
+
+void interschimbarePare(NodDublu *prim) {
+    NodDublu *curent = prim;
+    while (curent != NULL && curent->urmator != NULL) {
+        int temp = curent->valoare;
+        curent->valoare = curent->urmator->valoare;
+        curent->urmator->valoare = temp;
+        curent = curent->urmator->urmator;
+    }
+}
+
+void stergerePrimUltim(NodDublu **prim) {
+    if (*prim == NULL) {
+        return;
+    }
+    if ((*prim)->urmator == NULL) {
+        free(*prim);
+        *prim = NULL;
+        return;
+    }
+    NodDublu *ultim = *prim;
+    while (ultim->urmator != NULL) {
+        ultim = ultim->urmator;
+    }
+    ultim->anterior->urmator = NULL;
+    free(ultim);
+    ultim = NULL;
+    NodDublu *temp = *prim;
+    *prim = (*prim)->urmator;
+    free(temp);
+    temp = NULL;
+}
+
+void mutareUltimInFataPrimului(NodDublu **prim) {
+    if (*prim == NULL || (*prim)->urmator == NULL) {
+        return;
+    }
+    NodDublu *ultim = *prim;
+    while (ultim->urmator != NULL) {
+        ultim = ultim->urmator;
+    }
+    ultim->urmator = *prim;
+    (*prim)->anterior = ultim;
+    *prim = (*prim)->urmator;
+    (*prim)->anterior = NULL;
+}
+void afisareLista(Nod *lista) {
+    Nod *curent = lista;
+    while (curent != NULL) {
+        printf("%d ", curent->valoare);
+        curent = curent->urmator;
+    }
+    printf("\n");
+}
+
+void afisareListaDubla(NodDublu *prim) {
+    NodDublu *curent = prim;
+    while (curent != NULL) {
+        printf("%d ", curent->valoare);
+        curent = curent->urmator;
+    }
+    printf("\n");
+}
+
+int main() {
+    // Aplicația 9.2
+    FILE *fisier = fopen("numere.txt", "r");
+    if (fisier == NULL) {
+        printf("Eroare la deschiderea fisierului.\n");
+        return 1;
+    }
+    Nod *listaPare = NULL;
+    Nod *listaImpare = NULL;
+    creareListePareImpare(fisier, &listaPare, &listaImpare);
+    fclose(fisier);
+    if (listaPare != NULL) {
+        Nod *curent = listaPare;
+        while (curent->urmator != NULL) {
+            curent = curent->urmator;
+        }
+        curent->urmator = listaImpare;
+    } else {
+        listaPare = listaImpare;
+    }
+    printf("Lista finala cu elemente pare si impare:\n");
+    afisareLista(listaPare);
+
+    // Aplicația 9.3
+    printf("Lista dupa inserarea jumatatii valorii pentru nodurile cu valori pare:\n");
+    inserareJumatatePare(listaPare);
+    afisareLista(listaPare);
+
+    // Aplicația 9.4
+    NodDublu *listaDubla = NULL;
+    for (int i = 1; i <= 6; ++i) {
+        NodDublu *nou = (NodDublu *)malloc(sizeof(NodDublu));
+        nou->valoare = i;
+        nou->urmator = NULL;
+        nou->anterior = NULL;
+        if (listaDubla == NULL) {
+            listaDubla = nou;
+        } else {
+            NodDublu *curent = listaDubla;
+            while (curent->urmator != NULL) {
+                curent = curent->urmator;
+            }
+            curent->urmator = nou;
+            nou->anterior = curent;
+        }
+    }
+    printf("Lista dubla initiala:\n");
+    afisareListaDubla(listaDubla);
+    printf("Lista dubla dupa interschimbare:\n");
+    interschimbarePare(listaDubla);
+    afisareListaDubla(listaDubla);
+
+    // Aplicația 9.5
+    printf("Lista dubla initiala:\n");
+    afisareListaDubla(listaDubla);
+    stergerePrimUltim(&listaDubla);
+    printf("Lista dubla dupa stergere primul si ultimul nod:\n");
+    afisareListaDubla(listaDubla);
+
+    // Aplicația 9.6
+    printf("Lista dubla initiala:\n");
+    afisareListaDubla(listaDubla);
+    mutareUltimInFataPrimului(&listaDubla);
+    printf("Lista dubla dupa mutare ultimul nod in fata primului:\n");
+    afisareListaDubla(listaDubla);
+
+    return 0;
+}
