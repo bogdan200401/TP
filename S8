@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct WordNode {
+    char *word;
+    int count;
+    struct WordNode *next;
+} WordNode;
+
+WordNode *createWordNode(const char *word) {
+    WordNode *newNode = (WordNode *)malloc(sizeof(WordNode));
+    if (newNode == NULL) {
+        printf("Eroare la alocarea de memorie pentru nodul cuvântului.\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->word = strdup(word); 
+    newNode->count = 1;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void displayWordList(WordNode *head) {
+    WordNode *current = head;
+    while (current != NULL) {
+        printf("%s: %d\n", current->word, current->count);
+        current = current->next;
+    }
+}
+
+void addWord(WordNode **head, const char *word) {
+    if (*head == NULL) {
+        *head = createWordNode(word);
+    } else {
+        WordNode *current = *head;
+        while (current->next != NULL) {
+            if (strcmp(current->word, word) == 0) {
+                current->count++;
+                return;
+            }
+            current = current->next;
+        }
+        if (strcmp(current->word, word) == 0) {
+            current->count++;
+        } else {
+            current->next = createWordNode(word);
+        }
+    }
+}
+void insertWord(WordNode **head, const char *word, const char *successor) {
+    if (*head == NULL) {
+        *head = createWordNode(word);
+    } else {
+        WordNode *current = *head;
+        WordNode *prev = NULL;
+        while (current != NULL && strcmp(current->word, successor) != 0) {
+            prev = current;
+            current = current->next;
+        }
+        WordNode *newNode = createWordNode(word);
+        if (prev == NULL) {
+            newNode->next = *head;
+            *head = newNode;
+        } else {
+            prev->next = newNode;
+            newNode->next = current;
+        }
+    }
+}
+
+int main() {
+    char sentence[1000];
+    printf("Introduceti o propozitie: ");
+    fgets(sentence, sizeof(sentence), stdin);
+    WordNode *wordList = NULL;
+    char *word = strtok(sentence, " \n");
+    while (word != NULL) {
+        // Conversia cuvintelor la litere mici
+        for (int i = 0; word[i]; i++) {
+            word[i] = tolower(word[i]);
+        }
+        addWord(&wordList, word);
+        word = strtok(NULL, " \n");
+    }
+    
+    printf("Numarul de aparitii ale fiecarui cuvant:\n");
+    displayWordList(wordList);
+    insertWord(&wordList, "exemplu", "unui");
+    printf("Lista de cuvinte dupa inserare:\n");
+    displayWordList(wordList);
+
+    return 0;
+}
